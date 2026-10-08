@@ -1,0 +1,85 @@
+Intelligent Project Scheduling Assistance System
+🎓 Overview
+A comprehensive AI-powered platform that helps students plan and manage academic projects effectively. The system uses historical patterns, rule-based algorithms, and intelligent recommendations to optimize project schedules, identify skill gaps, and provide personalized learning paths.
+
+✨ Key Features
+User Management: Role-based authentication (Student/Faculty)
+Skill Assessment: Self-assessment with 1-5 proficiency scale
+Skill Gap Analysis: Rule-based comparison engine with priority scoring
+Intelligent Scheduling: Timeline optimization based on skill proficiency
+Learning Recommendations: Personalized resource suggestions
+Progress Tracking: Real-time milestone monitoring with delay alerts
+Career Planning: Industry-aligned skill development roadmaps
+Faculty Mentoring: Student progress dashboards and feedback system
+Cloud Access: MongoDB backend with session management
+
+🛠️ Tech Stack
+Backend:           Python 3.8+
+Framework:         Flask 2.3.2
+Database:          MongoDB (mongodb://localhost:27017/)
+ORM:               PyMongo 4.4.1
+Security:          Werkzeug (Password Hashing)
+Date Handling:     python-dateutil 2.8.2
+Session Mgmt:      Flask Sessions
+Server:            Flask Development Server (Port 5006)
+
+
+Frontend:          HTML5, Vanilla JavaScript, CSS3
+Styling:           Custom CSS (Responsive Design)
+UI Framework:      None (Pure CSS Grid/Flexbox)
+Icons:             Unicode Emojis
+Forms:             Native HTML Forms
+
+
+🚀 Quick Start
+Prerequisites
+Python 3.8+
+
+MongoDB (running on localhost:27017)
+
+1. Clone & Setup
+cd intelligent_project_scheduling
+
+2. Install Dependencies
+pip install -r requirements.txt
+
+3. Start MongoDB
+mongod  # or systemctl start mongod
+
+
+4. Run Application
+python app.py
+
+
+5. Access System
+http://localhost:5006
+
+
+🔬 Core Algorithms Implemented
+1. Skill Gap Analysis Algorithm
+Priority = (Gap_Value × Importance) × Severity_Multiplier
+Severity: Gap≥3 (1.5x), Gap≥2 (1.2x)
+
+2. Recommendation Engine
+Score = Skill_Match(40) + Difficulty(30) + Time(20) + Format(10)
+Top 3 resources per gap (Score ≥ 40)
+
+3. Intelligent Scheduling
+Duration = Base_Hours × Proficiency_Multiplier + Gap_Buffer
+Multiplier: <2(2.0x), <3(1.5x), <4(1.2x), ≥4(1.0x)
+Buffer: 2hrs per gap level
+
+4. Delay Detection
+Alerts: OVERDUE (>100%), AT_RISK (≥20% deviation), WARNING (≥10%)
+
+5. Learning Path Prioritization
+Priority = (Urgency×0.4) + (Career×0.3) + (Ease×0.2) + (Importance×0.1)
+
+🎨 UI/UX Features
+Responsive Design: Mobile-first CSS Grid/Flexbox
+Purple Gradient Theme: Modern #667eea → #764ba2
+Dashboard Stats: Real-time metrics cards
+Interactive Forms: Dynamic skill/task row addition
+Visual Alerts: Color-coded severity system
+Progress Tables: Hover effects and sorting-ready
+Professional Layout: Sidebar navigation + main content

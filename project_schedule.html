@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Schedule</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <h2>📚 Student Portal</h2>
+            <ul>
+                <li><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('skill_assessment') }}">Skill Assessment</a></li>
+                <li><a href="{{ url_for('gap_analysis') }}">Gap Analysis</a></li>
+                <li><a href="{{ url_for('project_schedule') }}" class="active">Project Schedule</a></li>
+                <li><a href="{{ url_for('recommendations') }}">Recommendations</a></li>
+                <li><a href="{{ url_for('progress_tracking') }}">Progress Tracking</a></li>
+                <li><a href="{{ url_for('career_planning') }}">Career Planning</a></li>
+                <li><a href="{{ url_for('mentoring') }}">Mentoring</a></li>
+                <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <h1>📅 Intelligent Project Scheduling</h1>
+
+            {% if not view_mode %}
+            <p>Create an optimized project schedule based on your skills</p>
+            <div class="form-container">
+                <form method="POST" action="{{ url_for('project_schedule') }}">
+                    <div class="form-group">
+                        <label for="project_name">Project Name *</label>
+                        <input type="text" id="project_name" name="project_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project_type">Project Type *</label>
+                        <select id="project_type" name="project_type" required>
+                            <option value="">-- Select Type --</option>
+                            {% for pt in project_types %}
+                                <option value="{{ pt.name }}">{{ pt.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="start_date">Start Date *</label>
+                        <input type="date" id="start_date" name="start_date" required>
+                    </div>
+
+                    <h3>Project Tasks</h3>
+                    <div id="tasksContainer">
+                        <div class="task-row">
+                            <input type="text" name="task_name[]" placeholder="Task Name" required>
+                            <input type="number" name="task_hours[]" placeholder="Est. Hours" min="1" required>
+                            <input type="text" name="task_dependencies[]" placeholder="Dependencies (e.g., 1,2)">
+                            <button type="button" class="btn-remove" onclick="removeTask(this)">Remove</button>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary" onclick="addTask()">+ Add Task</button>
+                    <button type="submit" class="btn btn-primary">Generate Schedule</button>
+                </form>
+            </div>
+            {% endif %}
+
+            {% if project %}
+            <div class="dashboard-section">
+                <h2>📊 Project Schedule: {{ project.project_name }}</h2>
+                <p><strong>Project Type:</strong> {{ project.project_type }}</p>
+                <p><strong>Start Date:</strong> {{ project.start_date.strftime('%Y-%m-%d') }}</p>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Task ID</th>
+                                <th>Task Name</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Duration (hrs)</th>
+                                <th>Buffer (hrs)</th>
+                                <th>Dependencies</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for milestone in project.schedule %}
+                            <tr>
+                                <td>{{ milestone.task_id }}</td>
+                                <td>{{ milestone.task_name }}</td>
+                                <td>{{ milestone.start_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ milestone.end_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ "%.1f"|format(milestone.duration) }}</td>
+                                <td>{{ "%.1f"|format(milestone.buffer) }}</td>
+                                <td>{{ milestone.dependencies|join(', ') if milestone.dependencies else 'None' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{{ url_for('progress_tracking') }}" class="btn btn-primary">Track Progress</a>
+                    <a href="{{ url_for('project_schedule') }}" class="btn btn-secondary">New Schedule</a>
+                </div>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <script>
+        function addTask() {
+            const container = document.getElementById('tasksContainer');
+            const taskRow = document.createElement('div');
+            taskRow.className = 'task-row';
+            taskRow.innerHTML = `
+                <input type="text" name="task_name[]" placeholder="Task Name" required>
+                <input type="number" name="task_hours[]" placeholder="Est. Hours" min="1" required>
+                <input type="text" name="task_dependencies[]" placeholder="Dependencies (e.g., 1,2)">
+                <button type="button" class="btn-remove" onclick="removeTask(this)">Remove</button>
+            `;
+            container.appendChild(taskRow);
+        }
+
+        function removeTask(button) {
+            const container = document.getElementById('tasksContainer');
+            if (container.children.length > 1) {
+                button.parentElement.remove();
+            }
+        }
+    </script>
+</body>
+</html>

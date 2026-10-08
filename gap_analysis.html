@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gap Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <h2>📚 Student Portal</h2>
+            <ul>
+                <li><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('skill_assessment') }}">Skill Assessment</a></li>
+                <li><a href="{{ url_for('gap_analysis') }}" class="active">Gap Analysis</a></li>
+                <li><a href="{{ url_for('project_schedule') }}">Project Schedule</a></li>
+                <li><a href="{{ url_for('recommendations') }}">Recommendations</a></li>
+                <li><a href="{{ url_for('progress_tracking') }}">Progress Tracking</a></li>
+                <li><a href="{{ url_for('career_planning') }}">Career Planning</a></li>
+                <li><a href="{{ url_for('mentoring') }}">Mentoring</a></li>
+                <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <h1>🔍 Skill Gap Analysis</h1>
+
+            {% if not view_mode %}
+            <p>Compare your skills with project requirements</p>
+            <div class="form-container">
+                <form method="POST" action="{{ url_for('gap_analysis') }}">
+                    <div class="form-group">
+                        <label for="project_type">Select Project Type *</label>
+                        <select id="project_type" name="project_type" required>
+                            <option value="">-- Choose Project Type --</option>
+                            {% for pt in project_types %}
+                                <option value="{{ pt.name }}">{{ pt.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Analyze Gaps</button>
+                </form>
+            </div>
+            {% endif %}
+
+            {% if report %}
+            <div class="dashboard-section">
+                <h2>📊 Gap Analysis Report</h2>
+                <p><strong>Project Type:</strong> {{ report.project_type }}</p>
+                <p><strong>Generated:</strong> {{ report.generated_at.strftime('%Y-%m-%d %H:%M') }}</p>
+
+                {% if report.gaps %}
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Skill Name</th>
+                                <th>Category</th>
+                                <th>Required Level</th>
+                                <th>Current Level</th>
+                                <th>Gap</th>
+                                <th>Priority</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for gap in report.gaps %}
+                            <tr>
+                                <td>{{ gap.skill_name }}</td>
+                                <td>{{ gap.category|capitalize }}</td>
+                                <td>{{ gap.required }}</td>
+                                <td>{{ gap.current }}</td>
+                                <td class="gap-value">{{ gap.gap }}</td>
+                                <td class="priority-{{ 'high' if gap.priority > 10 else 'medium' if gap.priority > 5 else 'low' }}">
+                                    {{ "%.2f"|format(gap.priority) }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{{ url_for('recommendations') }}" class="btn btn-primary">View Recommendations</a>
+                    <a href="{{ url_for('gap_analysis') }}" class="btn btn-secondary">New Analysis</a>
+                </div>
+                {% else %}
+                <p class="success-message">✅ No skill gaps found! You meet all requirements.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

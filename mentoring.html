@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentoring Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            {% if role == 'faculty' %}
+            <h2>👨‍🏫 Faculty Portal</h2>
+            <ul>
+                <li><a href="{{ url_for('faculty_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('skill_requirements') }}">Skill Requirements</a></li>
+                <li><a href="{{ url_for('mentoring') }}" class="active">Student Mentoring</a></li>
+                <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            </ul>
+            {% else %}
+            <h2>📚 Student Portal</h2>
+            <ul>
+                <li><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('skill_assessment') }}">Skill Assessment</a></li>
+                <li><a href="{{ url_for('gap_analysis') }}">Gap Analysis</a></li>
+                <li><a href="{{ url_for('project_schedule') }}">Project Schedule</a></li>
+                <li><a href="{{ url_for('recommendations') }}">Recommendations</a></li>
+                <li><a href="{{ url_for('progress_tracking') }}">Progress Tracking</a></li>
+                <li><a href="{{ url_for('career_planning') }}">Career Planning</a></li>
+                <li><a href="{{ url_for('mentoring') }}" class="active">Mentoring</a></li>
+                <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            </ul>
+            {% endif %}
+        </nav>
+
+        <main class="main-content">
+            {% if role == 'faculty' %}
+            <h1>👥 Student Mentoring Portal</h1>
+
+            <div class="dashboard-section">
+                <h2>Student Progress Overview</h2>
+                {% if student_progress %}
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Email</th>
+                                <th>Project</th>
+                                <th>Overall Progress</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sp in student_progress %}
+                            <tr>
+                                <td>{{ sp.student.full_name }}</td>
+                                <td>{{ sp.student.email }}</td>
+                                <td>{{ sp.project.project_name if sp.project else 'N/A' }}</td>
+                                <td>{{ "%.1f"|format(sp.progress) }}%</td>
+                                <td>
+                                    <button class="btn btn-sm" onclick="showFeedbackForm('{{ sp.student._id }}')">Give Feedback</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p>No students found.</p>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-section" id="feedbackForm" style="display:none;">
+                <h2>Provide Feedback</h2>
+                <form method="POST" action="{{ url_for('submit_feedback') }}">
+                    <input type="hidden" id="student_id" name="student_id">
+                    <div class="form-group">
+                        <label for="feedback">Feedback *</label>
+                        <textarea id="feedback" name="feedback" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="rating">Rating *</label>
+                        <select id="rating" name="rating" required>
+                            <option value="5">5 - Excellent</option>
+                            <option value="4">4 - Good</option>
+                            <option value="3">3 - Average</option>
+                            <option value="2">2 - Needs Improvement</option>
+                            <option value="1">1 - Poor</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                </form>
+            </div>
+
+            {% else %}
+            <h1>👨‍🏫 Connect with Faculty</h1>
+
+            <div class="dashboard-section">
+                <h2>Schedule Mentoring Session</h2>
+                <form method="POST" action="{{ url_for('schedule_session') }}">
+                    <div class="form-group">
+                        <label for="faculty_id">Select Faculty *</label>
+                        <select id="faculty_id" name="faculty_id" required>
+                            <option value="">-- Choose Faculty --</option>
+                            {% for faculty in faculty_members %}
+                                <option value="{{ faculty._id }}">{{ faculty.full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="session_date">Session Date *</label>
+                        <input type="date" id="session_date" name="session_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="purpose">Purpose *</label>
+                        <textarea id="purpose" name="purpose" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Schedule Session</button>
+                </form>
+            </div>
+
+            {% if feedback_received %}
+            <div class="dashboard-section">
+                <h2>Feedback from Faculty</h2>
+                <div class="feedback-list">
+                    {% for fb in feedback_received %}
+                    <div class="feedback-card">
+                        <p class="feedback-text">{{ fb.feedback }}</p>
+                        <p class="feedback-meta">Rating: {{ fb.rating }}/5 | {{ fb.created_at.strftime('%Y-%m-%d') }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+        </main>
+    </div>
+
+    <script>
+        function showFeedbackForm(studentId) {
+            document.getElementById('student_id').value = studentId;
+            document.getElementById('feedbackForm').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

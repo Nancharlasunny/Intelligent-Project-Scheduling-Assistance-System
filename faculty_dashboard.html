@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <h2>👨‍🏫 Faculty Portal</h2>
+            <ul>
+                <li><a href="{{ url_for('faculty_dashboard') }}" class="active">Dashboard</a></li>
+                <li><a href="{{ url_for('skill_requirements') }}">Skill Requirements</a></li>
+                <li><a href="{{ url_for('mentoring') }}">Student Mentoring</a></li>
+                <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Welcome, {{ session.full_name }}!</h1>
+                <p>Faculty dashboard for student guidance</p>
+            </header>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>{{ student_count }}</h3>
+                    <p>Total Students</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ project_count }}</h3>
+                    <p>Active Projects</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ skill_req_count }}</h3>
+                    <p>Skill Requirements</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ pending_sessions|length }}</h3>
+                    <p>Pending Sessions</p>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2>Quick Actions</h2>
+                <div class="action-cards">
+                    <a href="{{ url_for('skill_requirements') }}" class="action-card">
+                        <h3>📋 Define Requirements</h3>
+                        <p>Create skill requirement templates</p>
+                    </a>
+                    <a href="{{ url_for('mentoring') }}" class="action-card">
+                        <h3>👥 Monitor Students</h3>
+                        <p>Track student progress and provide feedback</p>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

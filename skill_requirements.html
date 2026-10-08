@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Requirements</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <h2>👨‍🏫 Faculty Portal</h2>
+            <ul>
+                <li><a href="{{ url_for('faculty_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('skill_requirements') }}" class="active">Skill Requirements</a></li>
+                <li><a href="{{ url_for('mentoring') }}">Student Mentoring</a></li>
+                <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <h1>📋 Define Skill Requirements</h1>
+            <p>Create skill requirement templates for different project types</p>
+
+            <div class="form-container">
+                <form method="POST" action="{{ url_for('skill_requirements') }}">
+                    <div class="form-group">
+                        <label for="project_type">Project Type *</label>
+                        <input type="text" id="project_type" name="project_type" placeholder="e.g., Web Development, Data Science" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description *</label>
+                        <textarea id="description" name="description" rows="3" placeholder="Brief description of project type" required></textarea>
+                    </div>
+
+                    <h3>Required Skills</h3>
+                    <div id="skillsContainer">
+                        <div class="skill-row">
+                            <input type="text" name="skill_name[]" placeholder="Skill Name" required>
+                            <select name="proficiency_level[]" required>
+                                <option value="">Required Level</option>
+                                <option value="1">1 - Beginner</option>
+                                <option value="2">2 - Elementary</option>
+                                <option value="3">3 - Intermediate</option>
+                                <option value="4">4 - Advanced</option>
+                                <option value="5">5 - Expert</option>
+                            </select>
+                            <select name="importance[]" required>
+                                <option value="3">Medium Importance</option>
+                                <option value="1">Low</option>
+                                <option value="2">Below Average</option>
+                                <option value="4">High</option>
+                                <option value="5">Critical</option>
+                            </select>
+                            <select name="category[]" required>
+                                <option value="technical">Technical</option>
+                                <option value="domain">Domain</option>
+                                <option value="soft">Soft Skills</option>
+                            </select>
+                            <button type="button" class="btn-remove" onclick="removeSkill(this)">Remove</button>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary" onclick="addSkill()">+ Add Skill</button>
+                    <button type="submit" class="btn btn-primary">Create Requirement</button>
+                </form>
+            </div>
+
+            {% if requirements %}
+            <div class="dashboard-section">
+                <h2>Existing Requirements</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Project Type</th>
+                                <th>Description</th>
+                                <th>Skills Count</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in requirements %}
+                            <tr>
+                                <td>{{ req.project_type }}</td>
+                                <td>{{ req.description }}</td>
+                                <td>{{ req.skills|length }}</td>
+                                <td>{{ req.created_at.strftime('%Y-%m-%d') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <script>
+        function addSkill() {
+            const container = document.getElementById('skillsContainer');
+            const skillRow = document.createElement('div');
+            skillRow.className = 'skill-row';
+            skillRow.innerHTML = `
+                <input type="text" name="skill_name[]" placeholder="Skill Name" required>
+                <select name="proficiency_level[]" required>
+                    <option value="">Required Level</option>
+                    <option value="1">1 - Beginner</option>
+                    <option value="2">2 - Elementary</option>
+                    <option value="3">3 - Intermediate</option>
+                    <option value="4">4 - Advanced</option>
+                    <option value="5">5 - Expert</option>
+                </select>
+                <select name="importance[]" required>
+                    <option value="3">Medium Importance</option>
+                    <option value="1">Low</option>
+                    <option value="2">Below Average</option>
+                    <option value="4">High</option>
+                    <option value="5">Critical</option>
+                </select>
+                <select name="category[]" required>
+                    <option value="technical">Technical</option>
+                    <option value="domain">Domain</option>
+                    <option value="soft">Soft Skills</option>
+                </select>
+                <button type="button" class="btn-remove" onclick="removeSkill(this)">Remove</button>
+            `;
+            container.appendChild(skillRow);
+        }
+
+        function removeSkill(button) {
+            const container = document.getElementById('skillsContainer');
+            if (container.children.length > 1) {
+                button.parentElement.remove();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <h2>📚 Student Portal</h2>
+            <ul>
+                <li><a href="{{ url_for('student_dashboard') }}" class="active">Dashboard</a></li>
+                <li><a href="{{ url_for('skill_assessment') }}">Skill Assessment</a></li>
+                <li><a href="{{ url_for('gap_analysis') }}">Gap Analysis</a></li>
+                <li><a href="{{ url_for('project_schedule') }}">Project Schedule</a></li>
+                <li><a href="{{ url_for('recommendations') }}">Recommendations</a></li>
+                <li><a href="{{ url_for('progress_tracking') }}">Progress Tracking</a></li>
+                <li><a href="{{ url_for('career_planning') }}">Career Planning</a></li>
+                <li><a href="{{ url_for('mentoring') }}">Mentoring</a></li>
+                <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Welcome, {{ session.full_name }}!</h1>
+                <p>Your personal project scheduling dashboard</p>
+            </header>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>{{ skill_count }}</h3>
+                    <p>Skills Assessed</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ gap_count }}</h3>
+                    <p>Skill Gaps</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ project_count }}</h3>
+                    <p>Active Projects</p>
+                </div>
+                <div class="stat-card">
+                    <h3>{{ recent_alerts|length }}</h3>
+                    <p>Pending Alerts</p>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2>Quick Actions</h2>
+                <div class="action-cards">
+                    <a href="{{ url_for('skill_assessment') }}" class="action-card">
+                        <h3>📝 Assess Skills</h3>
+                        <p>Evaluate your current skill levels</p>
+                    </a>
+                    <a href="{{ url_for('gap_analysis') }}" class="action-card">
+                        <h3>🔍 Analyze Gaps</h3>
+                        <p>Identify skill deficiencies</p>
+                    </a>
+                    <a href="{{ url_for('project_schedule') }}" class="action-card">
+                        <h3>📅 Create Schedule</h3>
+                        <p>Plan your project timeline</p>
+                    </a>
+                </div>
+            </div>
+
+            {% if recent_alerts %}
+            <div class="dashboard-section">
+                <h2>Recent Alerts</h2>
+                <div class="alerts-list">
+                    {% for alert in recent_alerts %}
+                        <div class="alert-item severity-{{ alert.severity|lower }}">
+                            <span class="alert-type">{{ alert.type }}</span>
+                            <span class="alert-message">{{ alert.message }}</span>
+                            <span class="alert-time">{{ alert.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

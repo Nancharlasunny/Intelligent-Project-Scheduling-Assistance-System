@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Project Scheduling System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎓 Intelligent Project Scheduling Assistance System</h1>
+            <p class="subtitle">Optimize Your Project Planning with AI-Powered Insights</p>
+        </header>
+
+        <div class="hero-section">
+            <h2>Welcome to Your Smart Scheduling Assistant</h2>
+            <p>Leverage historical patterns and rule-based recommendations to manage project milestones effectively.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>📊 Skill Gap Analysis</h3>
+                <p>Identify and bridge skill gaps with intelligent recommendations</p>
+            </div>
+            <div class="feature-card">
+                <h3>⏰ Smart Scheduling</h3>
+                <p>Create optimized project schedules based on your skills</p>
+            </div>
+            <div class="feature-card">
+                <h3>📈 Progress Tracking</h3>
+                <p>Monitor milestones and receive delay alerts in real-time</p>
+            </div>
+            <div class="feature-card">
+                <h3>🎯 Career Planning</h3>
+                <p>Align projects with your career goals and industry needs</p>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+            <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Intelligent Project Scheduling System | All Rights Reserved</p>
+        </footer>
+    </div>
+</body>
+</html>

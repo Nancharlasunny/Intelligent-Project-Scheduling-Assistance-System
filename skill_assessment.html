@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Assessment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <h2>📚 Student Portal</h2>
+            <ul>
+                <li><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('skill_assessment') }}" class="active">Skill Assessment</a></li>
+                <li><a href="{{ url_for('gap_analysis') }}">Gap Analysis</a></li>
+                <li><a href="{{ url_for('project_schedule') }}">Project Schedule</a></li>
+                <li><a href="{{ url_for('recommendations') }}">Recommendations</a></li>
+                <li><a href="{{ url_for('progress_tracking') }}">Progress Tracking</a></li>
+                <li><a href="{{ url_for('career_planning') }}">Career Planning</a></li>
+                <li><a href="{{ url_for('mentoring') }}">Mentoring</a></li>
+                <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <h1>📝 Skill Assessment</h1>
+            <p>Evaluate your current skill levels (1-5 scale)</p>
+
+            <div class="form-container">
+                <form method="POST" action="{{ url_for('skill_assessment') }}" id="skillForm">
+                    <div id="skillsContainer">
+                        {% if current_skills and current_skills.skills %}
+                            {% for skill in current_skills.skills %}
+                            <div class="skill-row">
+                                <input type="text" name="skill_name[]" placeholder="Skill Name" value="{{ skill.name }}" required>
+                                <select name="skill_level[]" required>
+                                    <option value="">Level</option>
+                                    <option value="1" {% if skill.level == 1 %}selected{% endif %}>1 - Beginner</option>
+                                    <option value="2" {% if skill.level == 2 %}selected{% endif %}>2 - Elementary</option>
+                                    <option value="3" {% if skill.level == 3 %}selected{% endif %}>3 - Intermediate</option>
+                                    <option value="4" {% if skill.level == 4 %}selected{% endif %}>4 - Advanced</option>
+                                    <option value="5" {% if skill.level == 5 %}selected{% endif %}>5 - Expert</option>
+                                </select>
+                                <select name="skill_category[]" required>
+                                    <option value="technical" {% if skill.category == 'technical' %}selected{% endif %}>Technical</option>
+                                    <option value="domain" {% if skill.category == 'domain' %}selected{% endif %}>Domain</option>
+                                    <option value="soft" {% if skill.category == 'soft' %}selected{% endif %}>Soft Skills</option>
+                                </select>
+                                <button type="button" class="btn-remove" onclick="removeSkill(this)">Remove</button>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="skill-row">
+                                <input type="text" name="skill_name[]" placeholder="Skill Name" required>
+                                <select name="skill_level[]" required>
+                                    <option value="">Level</option>
+                                    <option value="1">1 - Beginner</option>
+                                    <option value="2">2 - Elementary</option>
+                                    <option value="3">3 - Intermediate</option>
+                                    <option value="4">4 - Advanced</option>
+                                    <option value="5">5 - Expert</option>
+                                </select>
+                                <select name="skill_category[]" required>
+                                    <option value="technical">Technical</option>
+                                    <option value="domain">Domain</option>
+                                    <option value="soft">Soft Skills</option>
+                                </select>
+                                <button type="button" class="btn-remove" onclick="removeSkill(this)">Remove</button>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <button type="button" class="btn btn-secondary" onclick="addSkill()">+ Add Another Skill</button>
+                    <button type="submit" class="btn btn-primary">Save Skills</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function addSkill() {
+            const container = document.getElementById('skillsContainer');
+            const skillRow = document.createElement('div');
+            skillRow.className = 'skill-row';
+            skillRow.innerHTML = `
+                <input type="text" name="skill_name[]" placeholder="Skill Name" required>
+                <select name="skill_level[]" required>
+                    <option value="">Level</option>
+                    <option value="1">1 - Beginner</option>
+                    <option value="2">2 - Elementary</option>
+                    <option value="3">3 - Intermediate</option>
+                    <option value="4">4 - Advanced</option>
+                    <option value="5">5 - Expert</option>
+                </select>
+                <select name="skill_category[]" required>
+                    <option value="technical">Technical</option>
+                    <option value="domain">Domain</option>
+                    <option value="soft">Soft Skills</option>
+                </select>
+                <button type="button" class="btn-remove" onclick="removeSkill(this)">Remove</button>
+            `;
+            container.appendChild(skillRow);
+        }
+
+        function removeSkill(button) {
+            const container = document.getElementById('skillsContainer');
+            if (container.children.length > 1) {
+                button.parentElement.remove();
+            } else {
+                alert('At least one skill is required');
+            }
+        }
+    </script>
+</body>
+</html>

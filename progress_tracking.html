@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Tracking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <h2>📚 Student Portal</h2>
+            <ul>
+                <li><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('skill_assessment') }}">Skill Assessment</a></li>
+                <li><a href="{{ url_for('gap_analysis') }}">Gap Analysis</a></li>
+                <li><a href="{{ url_for('project_schedule') }}">Project Schedule</a></li>
+                <li><a href="{{ url_for('recommendations') }}">Recommendations</a></li>
+                <li><a href="{{ url_for('progress_tracking') }}" class="active">Progress Tracking</a></li>
+                <li><a href="{{ url_for('career_planning') }}">Career Planning</a></li>
+                <li><a href="{{ url_for('mentoring') }}">Mentoring</a></li>
+                <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <h1>📈 Progress Tracking & Monitoring</h1>
+
+            {% if project %}
+            <div class="dashboard-section">
+                <h2>Update Progress</h2>
+                <div class="form-container">
+                    <form method="POST" action="{{ url_for('progress_tracking') }}">
+                        <div class="form-group">
+                            <label for="task_id">Select Task *</label>
+                            <select id="task_id" name="task_id" required>
+                                <option value="">-- Select Task --</option>
+                                {% for task in project.tasks %}
+                                    <option value="{{ task.id }}">{{ task.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="completion">Completion Percentage *</label>
+                            <input type="number" id="completion" name="completion" min="0" max="100" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes">Progress Notes</label>
+                            <textarea id="notes" name="notes" rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Update Progress</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2>Project Milestones</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Task Name</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Duration</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for milestone in project.schedule %}
+                            <tr>
+                                <td>{{ milestone.task_name }}</td>
+                                <td>{{ milestone.start_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ milestone.end_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ "%.1f"|format(milestone.duration) }}h</td>
+                                <td>
+                                    {% set prog = progress_logs|selectattr('task_id', 'equalto', milestone.task_id)|list %}
+                                    {% if prog %}
+                                        {{ prog[-1].completion }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <p>No active project found. Create a project schedule first.</p>
+                <a href="{{ url_for('project_schedule') }}" class="btn btn-primary">Create Schedule</a>
+            </div>
+            {% endif %}
+
+            {% if alerts %}
+            <div class="dashboard-section">
+                <h2>🚨 Alerts & Warnings</h2>
+                <div class="alerts-list">
+                    {% for alert in alerts %}
+                        <div class="alert-item severity-{{ alert.severity|lower }}">
+                            <span class="alert-type">{{ alert.type }}</span>
+                            <span class="alert-message">{{ alert.message }}</span>
+                            <span class="alert-time">{{ alert.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if progress_logs %}
+            <div class="dashboard-section">
+                <h2>Recent Progress Updates</h2>
+                <div class="progress-logs">
+                    {% for log in progress_logs[:10] %}
+                    <div class="log-entry">
+                        <strong>Task ID {{ log.task_id }}</strong>: {{ log.completion }}% complete
+                        <span class="log-time">{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+                        {% if log.notes %}
+                        <p class="log-notes">{{ log.notes }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

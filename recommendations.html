@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Recommendations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <h2>📚 Student Portal</h2>
+            <ul>
+                <li><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('skill_assessment') }}">Skill Assessment</a></li>
+                <li><a href="{{ url_for('gap_analysis') }}">Gap Analysis</a></li>
+                <li><a href="{{ url_for('project_schedule') }}">Project Schedule</a></li>
+                <li><a href="{{ url_for('recommendations') }}" class="active">Recommendations</a></li>
+                <li><a href="{{ url_for('progress_tracking') }}">Progress Tracking</a></li>
+                <li><a href="{{ url_for('career_planning') }}">Career Planning</a></li>
+                <li><a href="{{ url_for('mentoring') }}">Mentoring</a></li>
+                <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <h1>💡 Learning Recommendations</h1>
+            <p>Personalized learning resources to bridge your skill gaps</p>
+
+            {% if gaps %}
+            <div class="dashboard-section">
+                <h2>Skill Gaps Summary</h2>
+                <div class="gaps-summary">
+                    {% for gap in gaps[:5] %}
+                    <div class="gap-badge priority-{{ 'high' if gap.priority > 10 else 'medium' if gap.priority > 5 else 'low' }}">
+                        {{ gap.skill_name }} (Gap: {{ gap.gap }})
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if recommendations %}
+            <div class="dashboard-section">
+                <h2>📚 Recommended Learning Resources</h2>
+                <div class="recommendations-grid">
+                    {% for rec in recommendations %}
+                    <div class="recommendation-card">
+                        <h3>{{ rec.resource.title }}</h3>
+                        <div class="resource-details">
+                            <span class="badge">{{ rec.resource.skill }}</span>
+                            <span class="badge">Level {{ rec.resource.difficulty_level }}</span>
+                            <span class="badge">{{ rec.resource.duration }}h</span>
+                            <span class="badge">{{ rec.resource.format|capitalize }}</span>
+                        </div>
+                        <div class="relevance-score">
+                            Relevance: {{ "%.0f"|format(rec.relevance * 100) }}%
+                        </div>
+                        <a href="{{ rec.resource.url }}" target="_blank" class="btn btn-sm">Access Resource</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <p>No recommendations available. Please complete gap analysis first.</p>
+                <a href="{{ url_for('gap_analysis') }}" class="btn btn-primary">Run Gap Analysis</a>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Planning</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <h2>📚 Student Portal</h2>
+            <ul>
+                <li><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('skill_assessment') }}">Skill Assessment</a></li>
+                <li><a href="{{ url_for('gap_analysis') }}">Gap Analysis</a></li>
+                <li><a href="{{ url_for('project_schedule') }}">Project Schedule</a></li>
+                <li><a href="{{ url_for('recommendations') }}">Recommendations</a></li>
+                <li><a href="{{ url_for('progress_tracking') }}">Progress Tracking</a></li>
+                <li><a href="{{ url_for('career_planning') }}" class="active">Career Planning</a></li>
+                <li><a href="{{ url_for('mentoring') }}">Mentoring</a></li>
+                <li><a href="{{ url_for('logout') }}" class="logout">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <h1>🎯 Career Planning & Alignment</h1>
+            <p>Align your project selections with career goals</p>
+
+            <div class="form-container">
+                <form method="POST" action="{{ url_for('career_planning') }}">
+                    <div class="form-group">
+                        <label for="career_goal">Career Goal *</label>
+                        <input type="text" id="career_goal" name="career_goal" placeholder="e.g., Data Scientist, Full Stack Developer" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="target_industry">Target Industry *</label>
+                        <select id="target_industry" name="target_industry" required>
+                            <option value="">-- Select Industry --</option>
+                            <option value="Software Development">Software Development</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="AI/ML">AI/ML</option>
+                            <option value="Cloud Computing">Cloud Computing</option>
+                            <option value="Cybersecurity">Cybersecurity</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timeline_months">Timeline (Months) *</label>
+                        <input type="number" id="timeline_months" name="timeline_months" min="3" max="60" value="12" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Create Career Plan</button>
+                </form>
+            </div>
+
+            {% if career_path %}
+            <div class="dashboard-section">
+                <h2>📋 Your Career Development Plan</h2>
+                <div class="career-details">
+                    <p><strong>Career Goal:</strong> {{ career_path.career_goal }}</p>
+                    <p><strong>Target Industry:</strong> {{ career_path.target_industry }}</p>
+                    <p><strong>Timeline:</strong> {{ career_path.timeline_months }} months</p>
+                </div>
+
+                <h3>Required Skills for Target Role</h3>
+                <div class="skills-list">
+                    {% for skill in career_path.required_skills %}
+                    <span class="skill-badge">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+
+                {% if career_path.learning_path %}
+                <h3>Prioritized Learning Path</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sequence</th>
+                                <th>Skill</th>
+                                <th>Start Week</th>
+                                <th>Duration (Weeks)</th>
+                                <th>Priority Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in career_path.learning_path %}
+                            <tr>
+                                <td>{{ item.sequence }}</td>
+                                <td>{{ item.skill }}</td>
+                                <td>{{ "%.1f"|format(item.start_week) }}</td>
+                                <td>{{ "%.1f"|format(item.duration_weeks) }}</td>
+                                <td>{{ "%.2f"|format(item.priority_score) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>
